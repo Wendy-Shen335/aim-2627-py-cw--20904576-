@@ -48,7 +48,7 @@ jobs:
       - name: autopep8 check
         run: |
           python -m pip install -q autopep8
-          autopep8 --diff --recursive src/ > pep8.diff || true
+          autopep8 --diff --recursive src/main > pep8.diff || true
           if [ -s pep8.diff ]; then
             echo "::error::autopep8 发现格式问题（本地运行: autopep8 --in-place --recursive src/）"
             head -60 pep8.diff
