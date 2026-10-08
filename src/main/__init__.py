@@ -29,19 +29,21 @@ class Facing(Enum):
     def delta(self):
         """该朝向的单位位移向量 (dx, dy)。"""
         return self.value[0], self.value[1]
-        
+
 
 # ---------------------------------------------------------------------------
 # Q1 机器人自检（题面 Q1·自检状态计算与报告生成）
 # ---------------------------------------------------------------------------
 def hp_ratio(hp, max_hp):
-    
     """TODO(Q1)：血量百分比，返回 0-100 的 int；计算与边界规则见题面 Q1 规范。"""
+    HP = hp * 100 // max_hp
+    return int(HP)
     raise NotImplementedError("Q1 hp_ratio：题面 Q1·血量百分比与精度保障")
 
 
 def status_report(name, robot_type, hp, max_hp, battery):
     """TODO(Q1)：一行自检报告字符串；档位判定与逐字符格式见题面 Q1 规范。"""
+    HP = hp_ratio(hp, max_hp)
     raise NotImplementedError("Q1 status_report：题面 Q1·电量映射与报告格式")
 
 
