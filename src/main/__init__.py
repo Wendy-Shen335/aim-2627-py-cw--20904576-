@@ -41,13 +41,17 @@ def hp_ratio(hp, max_hp):
     elif hp > max_hp:
         raise ValueError("hp 不能大于 max_hp")
     HP = hp * 100 // max_hp
-    return HP
+    return int(HP)
 
 
 def status_report(name, robot_type, hp, max_hp, battery):
     """(Q1)：一行自检报告字符串"""
     if hp < 0 or max_hp <= 0 or battery < 0:
         raise ValueError("hp、max_hp、battery 必须为非负，且 max_hp > 0")
+    elif hp > max_hp:
+        raise ValueError("hp 不能大于 max_hp")
+    elif battery > 100:
+        raise ValueError("battery 不能大于 100")
     HP = hp_ratio(hp, max_hp)
     if battery >= 60:
         档位 = "OK"
