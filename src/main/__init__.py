@@ -70,33 +70,34 @@ def analyze_damage_log(lines):
     行格式、去重与统计口径见题面 Q2 规范。"""
     result_dict = {
         "total": 0,
-        "by_armor":{"front": 0, "left": 0, "right": 0},
+        "by_armor": {"front": 0, "left": 0, "right": 0},
         "most_hit": None,
         "avg": 0.0
     }
     seen_id = set()  # 用于去重的集合
     valid_count = 0  # 有效记录的数量
     for line in lines:
-        remainder = line.strip()        #去掉首尾空白
-        if remainder.startswith("#"):   #注释行，忽略
+        remainder = line.strip()  # 去掉首尾空白
+        if remainder.startswith("#"):  # 注释行，忽略
             continue
-        elif not remainder:             #空行，忽略
+        elif not remainder:  # 空行，忽略
             continue
-        elif remainder.startswith("{"): #JSON 对象行               
-            try:                                        #解析 JSON 对象
+        elif remainder.startswith("{"):  # JSON 对象行
+            try:  # 解析 JSON 对象
                 obj = json.loads(remainder)
-            except (ValueError, TypeError):             #解析失败，忽略
+            except (ValueError, TypeError):  # 解析失败，忽略
                 continue
-            if not isinstance(obj, dict):               #不是字典，忽略
+            if not isinstance(obj, dict):  # 不是字典，忽略
                 continue
-            if "armor" not in obj or "damage" not in obj:  #缺少字段，忽略
+            if "armor" not in obj or "damage" not in obj:  # 缺少字段，忽略
                 continue
-            if obj["armor"] not in ["front", "left", "right"]:  #armor 字段不合法，忽略
+            if obj["armor"] not in ["front", "left", "right"]:  # armor 字段不合法，忽略
                 continue
-            if not isinstance(obj["damage"], int) or obj["damage"] <= 0 or isinstance(obj["damage"], bool):  #damage 字段不合法，忽略
+            # damage 字段不合法，忽略
+            if not isinstance(obj["damage"], int) or obj["damage"] <= 0 or isinstance(obj["damage"], bool):
                 continue
             if "id" in obj:  # 如果有 id 字段，检查是否重复
-                if obj["id"] in seen_id:  
+                if obj["id"] in seen_id:
                     continue            # 重复，忽略
                 seen_id.add(obj["id"])  # 添加到已见集合
             valid_count += 1
@@ -104,7 +105,7 @@ def analyze_damage_log(lines):
             dmg = obj["damage"]
             result_dict["total"] += dmg
             result_dict["by_armor"][armor] += dmg
-        else:                           #传感器行
+        else:  # 传感器行
             rem_ok = True
             mapping = {"F": "front", "L": "left", "R": "right"}
             pack = {}
@@ -115,29 +116,32 @@ def analyze_damage_log(lines):
                 elif ":" not in rem:  # 没有冒号，格式不合法，忽略
                     rem_ok = False
                     break
-                drt, _, value = rem.partition(":")   #drt:direction
+                drt, _, value = rem.partition(":")  # drt:direction
                 drt = drt.strip()
                 value = value.strip()
-                if drt not in mapping:  #方向不合法，忽略
+                if drt not in mapping:  # 方向不合法，忽略
                     rem_ok = False
                     break
-                if not value.isdigit() or int(value) <= 0:  #值不合法，忽略
+                if not value.isdigit() or int(value) <= 0:  # 值不合法，忽略
                     rem_ok = False
                     break
                 pack[mapping[drt]] = int(value)
             if not rem_ok or not pack:  # 如果格式不合法或没有有效数据，忽略
-                    continue
+                continue
             for armor, dmg in pack.items():
                 result_dict["total"] += dmg
                 result_dict["by_armor"][armor] += dmg
             valid_count += 1
     if valid_count > 0:
         result_dict["avg"] = result_dict["total"] / valid_count
-        result_dict["most_hit"] = max(result_dict["by_armor"], key=result_dict["by_armor"].get) #找值最大的键
+        result_dict["most_hit"] = max(
+            result_dict["by_armor"], key=result_dict["by_armor"].get)  # 找值最大的键
     return result_dict
 # ---------------------------------------------------------------------------
 # Q3 SentryGrid（题面 Q3·载体物理规则）
 # ---------------------------------------------------------------------------
+
+
 class SentryGrid:
     """哨兵仿真载体（构造与只读属性已提供；四个 TODO 方法由你实现）。"""
 
