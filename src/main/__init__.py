@@ -226,7 +226,7 @@ class SentryGrid:
     @current_pos.setter
     def current_pos(self, value):
         """TODO(Q3)：位置 setter；三重输入校验见题面 Q3 规范第 1 条。"""
-        if not isinstance(value, (tuple,list)) or len(value) != 2:  # 输入校验
+        if not isinstance(value, (tuple, list)) or len(value) != 2:  # 输入校验
             raise TypeError("current_pos 必须为长度为 2 的 tuple/list")
         self._pos = self._clamp_cell(value)   # 规范化并存储
 
@@ -273,7 +273,31 @@ class SentryGrid:
 def next_step_toward(pos, target, obstacles, current_facing=Facing.UP):
     """TODO(Q4)：返回下一步应朝向的 Facing；
     候选判定、优先级与回退规则见题面 Q4 规范。"""
-    raise NotImplementedError("Q4 next_step_toward：题面 Q4·贪心策略与回退")
+    px, py = pos
+    tx, ty = target
+    dx, dy = abs(tx - px), abs(ty - py)
+    dist = dx + dy
+    candidates = []
+    for facing in Facing:
+        ddx, ddy = facing.delta
+        nx, ny = px + ddx, py + ddy
+        if (nx, ny) in obstacles:
+            continue  # 遇到障碍，跳过
+        if abs(nx - tx) + abs(ny - ty) < dist:  # 严格减距
+            candidates.append(facing)
+    if not candidates:  # 没有候选
+        return current_facing
+    if dx > dy:  # x 方向优先
+        if tx > px and Facing.RIGHT in candidates:
+            return Facing.RIGHT
+        elif tx < px and Facing.LEFT in candidates:
+            return Facing.LEFT
+    if dy > dx:  # y 方向优先
+        if ty > py and Facing.UP in candidates:
+            return Facing.UP
+        elif ty < py and Facing.DOWN in candidates:
+            return Facing.DOWN
+    return candidates[0]
 
 
 # ---------------------------------------------------------------------------
